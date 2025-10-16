@@ -45,7 +45,9 @@ const Booking = () => {
         const bookedResults = await Promise.all(
           services.map(async (service) => {
             const res = await fetch(
-              `http://localhost:5000/api/bookings/check/${mentor._id}/${service.title}`,
+              `${import.meta.env.VITE_BACKEND_URL}/${mentor._id}/${
+                service.title
+              }`,
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,

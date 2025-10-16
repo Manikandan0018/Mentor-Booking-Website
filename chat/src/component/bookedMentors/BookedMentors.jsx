@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Calendar, Clock, MessageCircle, Star, Award } from "lucide-react";
 import heroBg from "../../image/background1.png";
 
+
+
+
 const BookedMentors = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -14,9 +17,12 @@ const BookedMentors = () => {
         const token = localStorage.getItem("token");
         if (!token) return setLoading(false);
 
-        const res = await fetch("http://localhost:5000/api/auth/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/me`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         if (!res.ok) {
           console.error("Failed to fetch user:", res.status);

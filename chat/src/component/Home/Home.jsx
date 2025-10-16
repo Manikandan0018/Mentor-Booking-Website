@@ -19,7 +19,7 @@ const Home = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      fetch("http://localhost:5000/api/auth/me", {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
@@ -31,7 +31,7 @@ const Home = () => {
   // load mentors
   useEffect(() => {
     setIsLoading(true);
-    fetch("http://localhost:5000/api/auth/getMentor")
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/getMentor`)
       .then((res) => res.json())
       .then((data) => setMentors(data || []))
       .catch(console.error)

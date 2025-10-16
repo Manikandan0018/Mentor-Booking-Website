@@ -32,7 +32,7 @@ const MentorDateBooking = () => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    fetch("http://localhost:5000/api/auth/me", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -42,7 +42,7 @@ const MentorDateBooking = () => {
 
   // Fetch mentor info
   useEffect(() => {
-    fetch(`http://localhost:5000/api/auth/getMentor/${id}`)
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/getMentor/${id}`)
       .then((res) => res.json())
       .then(setMentor)
       .catch(console.error);

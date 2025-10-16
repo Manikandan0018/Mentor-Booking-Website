@@ -31,7 +31,7 @@ export const Signup = () => {
       data.append("role", role);
       if (file) data.append("profileImage", file);
 
-      const res = await fetch("http://localhost:5000/api/auth/signup", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/signup`, {
         method: "POST",
         body: data,
       });

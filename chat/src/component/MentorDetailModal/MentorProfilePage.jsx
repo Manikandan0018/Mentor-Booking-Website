@@ -19,7 +19,7 @@ const MentorProfilePage = () => {
     const fetchMentor = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/auth/getMentor/${id}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/getMentor/${id}`
         );
         if (!res.ok) throw new Error("Failed to fetch mentor");
         const data = await res.json();
