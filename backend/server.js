@@ -23,8 +23,8 @@ const server = http.createServer(app);
 // ------------------- MIDDLEWARE -------------------
 // ------------------- MIDDLEWARE -------------------
 const allowedOrigins = [
-  "http://localhost:5173", // local dev
-  "https://mentor-booking-website-udq0wh3tn-manikandan0018s-projects.vercel.app", // production frontend
+  "http://localhost:5173", 
+  "https://mentor-booking-website.vercel.app/"
 ];
 
 app.use(
