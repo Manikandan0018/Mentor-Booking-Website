@@ -21,9 +21,20 @@ const server = http.createServer(app);
 
 
 // ------------------- MIDDLEWARE -------------------
+// ------------------- MIDDLEWARE -------------------
+const allowedOrigins = [
+  "http://localhost:5173", // local dev
+  "https://mentor-booking-website-udq0wh3tn-manikandan0018s-projects.vercel.app", // production frontend
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+      // allow requests with no origin (like Postman)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error("CORS not allowed by server"));
+    },
     credentials: true,
   })
 );
@@ -49,7 +60,11 @@ app.use("/api/chat", chatRoutes);
 
 // ---------------- SOCKET.IO ----------------
 const io = new Server(server, {
-  cors: { origin: process.env.CLIENT_URL || "*", methods: ["GET", "POST"] },
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
 });
 
 let onlineUsers = {}; // { userId: socketId }
