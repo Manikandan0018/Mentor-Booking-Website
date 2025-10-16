@@ -6,9 +6,7 @@ import { motion } from "framer-motion";
 import { Mic, Send, Smile, Phone, PhoneOff } from "lucide-react";
 import heroBg from "../../image/background1.png";
 
-const socket = io(import.meta.env.VITE_BACKEND_URL, {
-  transports: ["websocket"],
-}); // adjust URL in production
+const socket = io(import.meta.env.VITE_BACKEND_URL); // adjust URL in production
 let peerConnection;
 
 const pcConfig = {
