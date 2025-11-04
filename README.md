@@ -47,5 +47,5 @@ A full-stack **Mentor Booking Web Application** that enables students to discove
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/Manikandan0018/MentorBooking.git
+git clone https://github.com/Manikandan0018/Mentor-Booking-Website
 cd MentorBooking
