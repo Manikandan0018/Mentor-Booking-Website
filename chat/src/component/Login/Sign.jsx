@@ -31,10 +31,14 @@ export const Signup = () => {
       data.append("role", role);
       if (file) data.append("profileImage", file);
 
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/signup`, {
-        method: "POST",
-        body: data,
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
 
       const result = await res.json();
       if (res.ok) {
