@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import http from "http";
 import { Server } from "socket.io";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import authRoutes from "./router/authRoute.js";
 import paymentRoutes from "./router/payment.js";
@@ -18,19 +20,16 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-
-
-// ------------------- MIDDLEWARE -------------------
 // ------------------- MIDDLEWARE -------------------
 const allowedOrigins = [
-  "http://localhost:5173", 
-  "https://mentor-booking-website.vercel.app"
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://mentor-booking-website.vercel.app",
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // allow requests with no origin (like Postman)
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
       return callback(new Error("CORS not allowed by server"));
@@ -46,19 +45,16 @@ app.post(
   stripeWebhook
 );
 
-// JSON & cookie parsers for all other routes
 app.use(cookieParser());
 app.use(express.json());
 
 // ------------------- ROUTES -------------------
 app.use("/api/auth", authRoutes);
-app.use("/api/payment", paymentRoutes); // /webhook already handled
+app.use("/api/payment", paymentRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/chat", chatRoutes);
 
 // ------------------- SOCKET.IO -------------------
-
-// ---------------- SOCKET.IO ----------------
 const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
@@ -68,7 +64,6 @@ const io = new Server(server, {
 });
 
 let onlineUsers = {}; // { userId: socketId }
-
 const getRoomId = (mentorId, userId) => [mentorId, userId].sort().join("-");
 
 io.on("connection", (socket) => {
@@ -82,27 +77,29 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", ({ mentorId, userId }) => {
     const room = getRoomId(mentorId, userId);
     socket.join(room);
+    socket.room = room;
   });
 
   socket.on("typing", ({ mentorId, userId, senderId, isTyping }) => {
     const room = getRoomId(mentorId, userId);
     socket.to(room).emit("displayTyping", { senderId, isTyping });
   });
+
   // --- Voice chat signaling ---
   socket.on("offer", (data) => {
-    socket.to(socket.room).emit("offer", data);
+    if (socket.room) socket.to(socket.room).emit("offer", data);
   });
 
   socket.on("answer", (data) => {
-    socket.to(socket.room).emit("answer", data);
+    if (socket.room) socket.to(socket.room).emit("answer", data);
   });
 
   socket.on("candidate", (data) => {
-    socket.to(socket.room).emit("candidate", data);
+    if (socket.room) socket.to(socket.room).emit("candidate", data);
   });
 
   socket.on("endCall", () => {
-    socket.to(socket.room).emit("endCall");
+    if (socket.room) socket.to(socket.room).emit("endCall");
   });
 
   socket.on(
@@ -121,14 +118,14 @@ io.on("connection", (socket) => {
 
       try {
         const [firstId, secondId] = [mentorId, userId].sort();
-        const chat = await Chat.findOneAndUpdate(
+        await Chat.findOneAndUpdate(
           { mentorId: firstId, userId: secondId },
           { $push: { messages: message } },
           { new: true, upsert: true }
         );
         io.to(room).emit("receiveMessage", message);
       } catch (err) {
-        console.error(err.message);
+        console.error("💥 Chat save error:", err.message);
       }
     }
   );
@@ -142,18 +139,32 @@ io.on("connection", (socket) => {
   });
 });
 
-// ---------------- ROUTES ----------------
+// ---------------- GET CHAT HISTORY ----------------
 app.get("/api/chat/:mentorId/:userId", async (req, res) => {
   const { mentorId, userId } = req.params;
   try {
     const [firstId, secondId] = [mentorId, userId].sort();
-    const chat = await Chat.findOne({ mentorId: firstId, userId: secondId }).populate("messages.senderId", "name profileImage");
+    const chat = await Chat.findOne({
+      mentorId: firstId,
+      userId: secondId,
+    }).populate("messages.senderId", "name profileImage");
+
     res.status(200).json(chat?.messages || []);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
+// ------------------- FRONTEND SERVE / 404 FIX -------------------
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// If you deploy frontend with backend (optional)
+app.use(express.static(path.join(__dirname, "client/dist")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/dist", "index.html"));
+});
 
 // ------------------- DATABASE + SERVER START -------------------
 mongoose
@@ -163,4 +174,3 @@ mongoose
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-
