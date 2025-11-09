@@ -1,19 +1,1 @@
-/* ✅ Always keep @import for fonts at the very top */
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&family=Michroma&display=swap');
-
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
-
-
-@theme{
-  --color-primary:"#3b82f6";
-  --color-primary-dark:"#0d0d0d";
-}
-/* ✅ Tailwind v4 already includes base, components, and utilities 
-   so you don't need @tailwind base/components/utilities separately. */
-
-/* ✅ Your custom styles */
-
-::-webkit-scrollbar {
-  display: none;
-}

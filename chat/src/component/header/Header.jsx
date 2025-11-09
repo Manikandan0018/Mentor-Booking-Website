@@ -29,33 +29,8 @@ const hideButtons =
             <span className="text-xl text-white">MentorSphere</span>
           </h1>
 
-          <nav className="hidden text-white md:flex items-center space-x-6 text-sm ">
-            <button
-              onClick={() => navigate("/home")}
-              className="hover:underline text-white"
-            >
-              Home
-            </button>
-
-            <button
-              onClick={() => navigate("/about")}
-              className="hover:underline text-white"
-            >
-              About Us
-            </button>
-            <button
-              onClick={() => navigate("/features")}
-              className="hover:underline"
-            >
-              Features
-            </button>
-            <button
-              onClick={() => navigate("/partnership")}
-              className="hover:underline"
-            >
-              Partnership
-            </button>
-          </nav>
+         
+          
         </div>
 
         {/* Desktop Right */}
@@ -105,36 +80,6 @@ const hideButtons =
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 w-full bg-white/20 dark:bg-black/60 backdrop-blur-xl shadow-lg flex flex-col items-center py-4 space-y-3 border-b border-gray-200 dark:border-gray-700 transition-all">
-          <nav className="w-full px-6 flex flex-col space-y-2">
-            <button
-              onClick={() => {
-                navigate("/about");
-                setMobileMenuOpen(false);
-              }}
-              className="text-left w-full py-2"
-            >
-              About Us
-            </button>
-            <button
-              onClick={() => {
-                navigate("/features");
-                setMobileMenuOpen(false);
-              }}
-              className="text-left w-full py-2"
-            >
-              Features
-            </button>
-            <button
-              onClick={() => {
-                navigate("/partnership");
-                setMobileMenuOpen(false);
-              }}
-              className="text-left w-full py-2"
-            >
-              Partnership
-            </button>
-          </nav>
-
           <div className="w-full px-6">
             {!hideButtons && (
               <>
@@ -172,19 +117,7 @@ const hideButtons =
                   </button>
                 )}
 
-                <button
-                  onClick={() => {
-                    setDark(!dark);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`w-11/12 py-2 rounded-full ${
-                    dark
-                      ? "bg-yellow-400 text-black"
-                      : "bg-gray-200 text-gray-700"
-                  }`}
-                >
-                  {dark ? "Light Mode" : "Dark Mode"}
-                </button>
+                
               </>
             )}
           </div>
